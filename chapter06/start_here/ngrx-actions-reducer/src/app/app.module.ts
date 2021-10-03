@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
 import * as appStore from './store/app.reducer';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,6 +17,9 @@ import * as appStore from './store/app.reducer';
     FormsModule,
     BrowserAnimationsModule,
     StoreModule.forRoot({ app: appStore.reducer }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],
