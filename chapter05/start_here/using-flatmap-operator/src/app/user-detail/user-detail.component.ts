@@ -8,11 +8,13 @@ import { takeWhile } from 'rxjs/operators';
 @Component({
   selector: 'app-user-detail',
   templateUrl: './user-detail.component.html',
-  styleUrls: ['./user-detail.component.scss']
+  styleUrls: ['./user-detail.component.scss'],
 })
 export class UserDetailComponent implements OnInit, OnDestroy {
   user$: Observable<IUser>;
   similarUsers$: Observable<IUser[]>;
+  user: IUser;
+  similarUsers: IUser[];
   isComponentAlive: boolean;
   constructor(
     private userService: UserService,
@@ -21,17 +23,16 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isComponentAlive = true;
-    this.route.paramMap.pipe(
-      takeWhile(() => !!this.isComponentAlive)
-    ).subscribe((params) => {
-      const userId = params.get('uuid');
-      this.similarUsers$ = this.userService.getSimilarUsers(userId);
-      this.user$ = this.userService.getUser(userId);
-    })
+    this.route.paramMap
+      .pipe(takeWhile(() => !!this.isComponentAlive))
+      .subscribe((params) => {
+        const userId = params.get('uuid');
+        this.similarUsers$ = this.userService.getSimilarUsers(userId);
+        this.user$ = this.userService.getUser(userId);
+      });
   }
 
   ngOnDestroy() {
     this.isComponentAlive = false;
   }
-
 }
