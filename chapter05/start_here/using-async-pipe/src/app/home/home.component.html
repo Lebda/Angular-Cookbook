@@ -2,12 +2,15 @@
   <div class="cards-container">
     <div class="input-stream">
       <div class="input-stream__item" *ngFor="let item of inputStreamData">
-        {{item}}
+        {{ item }}
       </div>
     </div>
     <div class="output-stream">
-      <div class="input-stream__item" *ngFor="let item of outputStreamData">
-        {{item}}
+      <div
+        class="input-stream__item"
+        *ngFor="let item of streamsOutput$ | async"
+      >
+        {{ item }}
       </div>
     </div>
   </div>
