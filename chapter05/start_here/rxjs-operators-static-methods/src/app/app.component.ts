@@ -1,54 +1,76 @@
 import { Component } from '@angular/core';
-import { interval, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { interval, Subscription, partition, merge } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   subscription: Subscription = null;
-  combinedStreamData = [{
-    type: 'movie',
-    title: 'john wick'
-  }, {
-    type: 'cartoon',
-    title: 'Thunder Cats'
-  }, {
-    type: 'movie',
-    title: 'inception'
-  }, {
-    type: 'cartoon',
-    title: 'Dragon Ball Z'
-  }, {
-    type: 'cartoon',
-    title: 'Ninja Turtles'
-  }, {
-    type: 'movie',
-    title: 'interstellar'
-  }];
+  combinedStreamData = [
+    {
+      type: 'movie',
+      title: 'john wick',
+    },
+    {
+      type: 'cartoon',
+      title: 'Thunder Cats',
+    },
+    {
+      type: 'movie',
+      title: 'inception',
+    },
+    {
+      type: 'cartoon',
+      title: 'Dragon Ball Z',
+    },
+    {
+      type: 'cartoon',
+      title: 'Ninja Turtles',
+    },
+    {
+      type: 'movie',
+      title: 'interstellar',
+    },
+  ];
   outputStreamData = [];
-  ngOnInit() {
-  }
+  movies = [];
+  cartoons = [];
+  public ngOnInit(): void {}
 
-  startStream() {
+  public startStream(): void {
     const streamSource = interval(1500).pipe(
-      map(input => {
+      map((input) => {
         const index = input % this.combinedStreamData.length;
         return this.combinedStreamData[index];
       })
     );
-    this.subscription = streamSource
-      .subscribe(input => {
-        this.outputStreamData.push(input);
-      });
-
+    const [moviesStream, cartoonsStream] = partition(
+      streamSource,
+      (item) => item.type === 'movie'
+    );
+    const sourceStream = merge(
+      moviesStream.pipe(
+        tap((movie) => {
+          this.movies.push(movie.title);
+        })
+      ),
+      cartoonsStream.pipe(
+        tap((cartoon) => {
+          this.cartoons.push(cartoon.title);
+        })
+      )
+    );
+    this.subscription = sourceStream.subscribe((input) => {
+      this.outputStreamData.push(input);
+      console.log(input);
+    });
   }
 
-  stopStream() {
+  public stopStream(): void {
     this.subscription.unsubscribe();
     this.subscription = null;
   }
-
 }
