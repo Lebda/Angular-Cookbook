@@ -7,17 +7,20 @@ export interface AppState {
 }
 
 const initialState: AppState = {
-  users: null
-}
+  users: null,
+};
 
 const appReducer = createReducer(
   initialState,
   on(getUsersSuccess, (state, action) => ({
     ...state,
-    users: action.users
+    users: action.users,
   }))
 );
 
-export function reducer(state: AppState = initialState, action: Action) {
+export function reducer(
+  state: AppState = initialState,
+  action: Action
+): AppState {
   return appReducer(state, action);
 }
